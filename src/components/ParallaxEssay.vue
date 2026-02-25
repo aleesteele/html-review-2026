@@ -50,8 +50,8 @@ const bgOpacity = computed(() => {
   const fadeStart = windowHeight.value * titleScrollRange
   const fadeEnd = fadeStart + windowHeight.value * fadeRange
   if (scrollY.value <= fadeStart) return 1
-  if (scrollY.value >= fadeEnd) return 0.35
-  return 1 - 0.65 * ((scrollY.value - fadeStart) / (fadeEnd - fadeStart))
+  if (scrollY.value >= fadeEnd) return 0.30
+  return 1 - 0.70 * ((scrollY.value - fadeStart) / (fadeEnd - fadeStart))
 })
 
 const essayOpacity = computed(() => {
