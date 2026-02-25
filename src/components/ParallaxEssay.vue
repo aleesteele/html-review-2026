@@ -30,16 +30,13 @@ const fadeRange = 1
 const textOffset = computed(() => {
   if (windowHeight.value === 0) return 100
   const progress = Math.min(Math.max(scrollY.value / (windowHeight.value * titleScrollRange), 0), 1)
-  return 100 - (progress * 150)
+  // Changed from 150 to 250 to ensure the text moves far enough to clear the screen on the left
+  return 100 - (progress * 250)
 })
 
 const titleOpacity = computed(() => {
-  if (windowHeight.value === 0) return 1
-  const fadeStart = windowHeight.value * titleScrollRange
-  const fadeEnd = fadeStart + windowHeight.value * fadeRange
-  if (scrollY.value <= fadeStart) return 1
-  if (scrollY.value >= fadeEnd) return 0
-  return 1 - (scrollY.value - fadeStart) / (fadeEnd - fadeStart)
+  // Changed to return 1 consistently so the title no longer fades away
+  return 1
 })
 
 const bgOpacity = computed(() => {
@@ -91,9 +88,6 @@ function keepTooltip() {
   if (hideTimeout) clearTimeout(hideTimeout)
 }
 
-// ── Ridge path ──
-const ridgePath = "M 0.0 40.0 L 0.5 39.9 L 1.0 39.7 L 1.5 39.6 L 2.0 39.5 L 2.5 39.4 L 3.0 39.4 L 3.5 39.4 L 4.0 39.5 L 4.5 39.7 L 5.0 40.0 L 5.5 40.2 L 6.0 40.3 L 6.5 40.6 L 7.0 40.8 L 7.5 40.7 L 8.0 40.6 L 8.5 40.4 L 9.0 40.0 L 9.5 39.7 L 10.0 39.1 L 10.5 38.5 L 11.0 37.9 L 11.5 37.3 L 12.0 36.6 L 12.5 36.0 L 13.0 35.5 L 13.5 34.7 L 14.0 33.8 L 14.5 32.9 L 15.0 31.8 L 15.5 30.7 L 16.0 29.3 L 16.5 28.0 L 17.0 26.8 L 17.5 25.5 L 18.0 24.5 L 18.5 23.5 L 19.0 22.4 L 19.5 21.5 L 20.0 20.5 L 20.5 19.5 L 21.0 18.6 L 21.5 17.7 L 22.0 16.8 L 22.5 17.0 L 23.0 16.6 L 23.5 16.3 L 24.0 16.3 L 24.5 16.4 L 25.0 16.9 L 25.5 17.5 L 26.0 17.6 L 26.5 18.8 L 27.0 20.2 L 27.5 21.8 L 28.0 23.4 L 28.5 25.0 L 29.0 26.9 L 29.5 28.7 L 30.0 30.4 L 30.5 32.0 L 31.0 33.7 L 31.5 35.5 L 32.0 37.3 L 32.5 38.6 L 33.0 39.7 L 33.5 40.3 L 34.0 40.9 L 34.5 41.2 L 35.0 41.1 L 35.5 40.8 L 36.0 40.6 L 36.5 40.5 L 37.0 40.3 L 37.5 40.0 L 38.0 39.8 L 38.5 39.1 L 39.0 38.3 L 39.5 37.3 L 40.0 36.1 L 40.5 35.0 L 41.0 33.5 L 41.5 31.9 L 42.0 30.7 L 42.5 29.6 L 43.0 28.5 L 43.5 27.5 L 44.0 26.5 L 44.5 25.8 L 45.0 25.3 L 45.5 24.7 L 46.0 24.1 L 46.5 23.5 L 47.0 23.1 L 47.5 22.8 L 48.0 22.5 L 48.5 22.2 L 49.0 22.0 L 49.5 21.9 L 50.0 22.1 L 50.5 22.2 L 51.0 22.5 L 51.5 23.1 L 52.0 24.1 L 52.5 25.3 L 53.0 26.6 L 53.5 27.9 L 54.0 29.0 L 54.5 30.2 L 55.0 31.2 L 55.5 32.3 L 56.0 33.0 L 56.5 33.5 L 57.0 34.3 L 57.5 34.7 L 58.0 34.8 L 58.5 35.2 L 59.0 34.8 L 59.5 34.7 L 60.0 34.9 L 60.5 34.3 L 61.0 34.5 L 61.5 34.4 L 62.0 34.5 L 62.5 35.2 L 63.0 35.5 L 63.5 36.1 L 64.0 36.7 L 64.5 37.0 L 65.0 38.0 L 65.5 38.4 L 66.0 38.6 L 66.5 38.8 L 67.0 38.8 L 67.5 39.2 L 68.0 39.0 L 68.5 38.8 L 69.0 38.6 L 69.5 38.2 L 70.0 37.7 L 70.5 36.8 L 71.0 35.7 L 71.5 34.9 L 72.0 33.4 L 72.5 31.8 L 73.0 30.3 L 73.5 28.9 L 74.0 27.4 L 74.5 26.0 L 75.0 24.6 L 75.5 23.7 L 76.0 22.8 L 76.5 22.0 L 77.0 21.3 L 77.5 20.7 L 78.0 20.2 L 78.5 19.7 L 79.0 19.2 L 79.5 19.0 L 80.0 18.9 L 80.5 18.8 L 81.0 18.9 L 81.5 19.1 L 82.0 19.4 L 82.5 19.7 L 83.0 20.0 L 83.5 20.4 L 84.0 20.9 L 84.5 21.5 L 85.0 22.2 L 85.5 23.0 L 86.0 23.9 L 86.5 24.9 L 87.0 25.9 L 87.5 27.0 L 88.0 28.0 L 88.5 28.9 L 89.0 30.0 L 89.5 31.5 L 90.0 32.4 L 90.5 33.5 L 91.0 34.1 L 91.5 34.7 L 92.0 35.2 L 92.5 35.4 L 93.0 35.2 L 93.5 35.6 L 94.0 35.6 L 94.5 36.0 L 95.0 36.2 L 95.5 36.4 L 96.0 36.5 L 96.5 36.5 L 97.0 36.4 L 97.5 36.3 L 98.0 36.3 L 98.5 36.2 L 99.0 36.2 L 99.5 36.2"
-
 // ══════════════════════════════════════════════════════
 // ESSAY DATA WITH ANNOTATIONS
 // ══════════════════════════════════════════════════════
@@ -114,6 +108,8 @@ const ridgePath = "M 0.0 40.0 L 0.5 39.9 L 1.0 39.7 L 1.5 39.6 L 2.0 39.5 L 2.5 
 // ══════════════════════════════════════════════════════
 
 const rawParagraphs = [
+  `by Anne Lee Steele`,
+
   `I first heard about the Baekdusan in a book my umma would read to me as a child. Each page was illustrated with myths, stories, and songs that she remembered from her own childhood in a mountain village near {{Gwangju|note:A city in South Jeolla Province, South Korea, known for the pro-democracy uprising of May 1980.}}, a city in the south of Korea made famous by the bloody protests that took place there in 1980. She had bought the book after the 1988 Olympics, the first time an international event had taken place in her homeland, a glimmer of what eventually became the {{hallyu wave|note:The Korean Wave — the global spread of South Korean culture including K-pop, K-drama, film, and cuisine.}}. Appropriate for the type of patriotism it was intended to inspire, the book was titled "I Love Korea!", exclamation point included.`,
 
   `Of course, I was too young to understand the shifts in selfhood that migration creates as a child born and raised in the American empire. Instead, I loved the stories themselves, and the illustrations that showed me another way of seeing the world outside of high-rise Chicago skyscrapers or midwestern pay-to-pick farms. The world of the book (and therefore the world of my mother's homeland) was inhabited by talking tigers and sea spirits, by brothers and sisters that became the sun and the moon, of gods descending to earth through the mountains. One of my favorites was about the tiger and the bear.`,
@@ -238,35 +234,26 @@ const essayParagraphs = computed(() => rawParagraphs.map(parseParagraph))
     </div>
 
     <!-- Foreground mountains (z-index 3, on top of text) -->
-    <div class="fixed-layer fixed-layer--fg">
-      <img src="/images/foreground.png" alt="" class="fixed-layer__img" />
+    <div class="fixed-layer fixed-layer--fg-mountains">
+      <img src="/images/foreground-mountains.png" alt="" class="fixed-layer__img fixed-layer__img--bottom" />
+    </div>
+
+    <!-- Foreground clouds (z-index 4, drifting left to right) -->
+    <div class="fixed-layer fixed-layer--fg-clouds">
+      <img src="/images/foreground-clouds.png" alt="" class="fixed-layer__img fixed-layer__img--clouds" />
     </div>
 
     <!-- ═══ SCROLLING CONTENT (z-index 2, between the mountain layers) ═══ -->
     <div class="scroll-content">
 
       <!-- Phase 1: Title scroll spacer -->
-      <div class="title-spacer">
-        <svg
-          class="title-svg"
-          :style="{ opacity: titleOpacity }"
-          viewBox="0 0 100 56"
-          preserveAspectRatio="xMidYMid slice"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <defs>
-            <path id="ridge-path" :d="ridgePath" fill="none" />
-          </defs>
-          <text class="ridge-text">
-            <textPath
-              href="#ridge-path"
-              :startOffset="textOffset + '%'"
-              dominant-baseline="central"
-            >
-              Tell umma I'm walking to Baekdusan &#160;&#160;&#160;&#160;&#160; By Anne Lee Steele
-            </textPath>
-          </text>
-        </svg>
+        <div class="title-spacer">
+        <div class="title-track" :style="{ opacity: titleOpacity }">
+          <h1
+            class="title-text"
+            :style="{ transform: 'translateX(' + textOffset + 'vw)' }"
+          >Tell umma I'm walking to Baekdusan</h1>
+        </div>
       </div>
 
       <!-- Phase 2: Transparent crossfade spacer -->
@@ -341,8 +328,15 @@ const essayParagraphs = computed(() => rawParagraphs.map(parseParagraph))
   z-index: 1;
 }
 
-.fixed-layer--fg {
+.fixed-layer--fg-mountains {
   z-index: 3;
+  top: auto;
+  bottom: 0;
+  height: auto;
+}
+
+.fixed-layer--fg-clouds {
+  z-index: 4;
 }
 
 .fixed-layer__img {
@@ -351,6 +345,25 @@ const essayParagraphs = computed(() => rawParagraphs.map(parseParagraph))
   object-fit: cover;
   object-position: center center;
   display: block;
+}
+
+/* Mountains: natural size, pinned to bottom */
+.fixed-layer__img--bottom {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* Clouds drift slowly left to right */
+.fixed-layer__img--clouds {
+  object-fit: contain;
+  object-position: center top;
+  animation: cloud-drift 50s ease-in-out infinite alternate;
+}
+
+@keyframes cloud-drift {
+  0% { transform: translateX(-3%); }
+  100% { transform: translateX(3%); }
 }
 
 /* ─── Scrolling Content ─── */
@@ -364,7 +377,7 @@ const essayParagraphs = computed(() => rawParagraphs.map(parseParagraph))
   position: relative;
 }
 
-.title-svg {
+.title-track {
   position: fixed;
   top: 0;
   left: 0;
@@ -372,15 +385,20 @@ const essayParagraphs = computed(() => rawParagraphs.map(parseParagraph))
   height: 100vh;
   z-index: 2;
   pointer-events: none;
-  will-change: opacity;
+  display: flex;
+  align-items: center;
+  overflow: visible;
 }
 
-.ridge-text {
-  font-family: 'Cascadia Code', sans-serif;
-  font-size: 2.4px;
+.title-text {
+  font-family: 'Noto Serif KR', sans-serif;
+  font-size: clamp(3rem, 7vw, 6rem);
   font-weight: 700;
-  fill: #1a1a1a;
-  letter-spacing: 0.08px;
+  color: #1a1a1a;
+  white-space: nowrap;
+  margin: 0;
+  will-change: transform;
+  line-height: 1.1;
 }
 
 .fade-spacer {
@@ -396,11 +414,11 @@ const essayParagraphs = computed(() => rawParagraphs.map(parseParagraph))
 }
 
 .essay__paragraph {
-  font-family: 'Cascadia Code', sans-serif;
-  font-size: clamp(0.85rem, 1.4vw, 1.05rem);
+  font-family: 'Noto Serif KR', sans-serif;                                              
+  font-size: clamp(1rem, 1.4vw, 1.05rem);
   line-height: 1.75;
   color: #1a1a1a;
-  font-weight: 700;
+  font-weight: 500;
   margin-bottom: 1.8em;
   text-align: left;
 }
@@ -468,8 +486,9 @@ const essayParagraphs = computed(() => rawParagraphs.map(parseParagraph))
     padding: 2vh 1.5rem 30vh;
   }
 
-  .ridge-text {
-    font-size: 3px;
+  .title-text {
+    font-size: clamp(3rem, 6vw, 4rem);
+    object-position: center center;
   }
 
   .tooltip {
@@ -482,8 +501,8 @@ const essayParagraphs = computed(() => rawParagraphs.map(parseParagraph))
     padding: 2vh 1rem 20vh;
   }
 
-  .ridge-text {
-    font-size: 3.5px;
+  .title-text {
+    font-size: clamp(1.8rem, 5vw, 3rem);
   }
 
   .tooltip {

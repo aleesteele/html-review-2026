@@ -24,7 +24,7 @@ The built files will be in `dist/`.
 The essay uses three visual layers:
 
 1. **Background** (`background.png`) — painted mountains with black silhouette framing, fixed position with slow parallax
-2. **Text** — the essay content in Cascadia Code, scrolls normally
+2. **Text** — the essay content in Courier Prime, scrolls normally
 3. **Foreground** (`foreground.png`) — mountains and clouds on black background that overlay the text, creating the illusion of depth
 
 The foreground image uses a black background which composites over the text. As you scroll, the background and foreground move at different rates to create the parallax effect.
