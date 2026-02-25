@@ -42,7 +42,6 @@ const subtitleOffset = computed(() => {
 })
 
 const titleOpacity = computed(() => {
-  // Changed to return 1 consistently so the title no longer fades away
   return 1
 })
 
@@ -51,17 +50,12 @@ const bgOpacity = computed(() => {
   const fadeStart = windowHeight.value * titleScrollRange
   const fadeEnd = fadeStart + windowHeight.value * fadeRange
   if (scrollY.value <= fadeStart) return 1
-  if (scrollY.value >= fadeEnd) return 0.5
-  return 1 - 0.5 * ((scrollY.value - fadeStart) / (fadeEnd - fadeStart))
+  if (scrollY.value >= fadeEnd) return 0.35
+  return 1 - 0.65 * ((scrollY.value - fadeStart) / (fadeEnd - fadeStart))
 })
 
 const essayOpacity = computed(() => {
-  if (windowHeight.value === 0) return 0
-  const fadeStart = windowHeight.value * titleScrollRange
-  const fadeEnd = fadeStart + windowHeight.value * fadeRange
-  if (scrollY.value <= fadeStart) return 0
-  if (scrollY.value >= fadeEnd) return 1
-  return (scrollY.value - fadeStart) / (fadeEnd - fadeStart)
+  return 1
 })
 
 // ── Tooltip state ──
@@ -413,7 +407,7 @@ const essayParagraphs = computed(() => rawParagraphs.map(parseParagraph))
 
 .title-text {
   font-family: 'Noto Serif KR', sans-serif;
-  font-size: clamp(3rem, 7vw, 6rem);
+  font-size: clamp(3.5rem, 7.5vw, 6.5rem);
   font-weight: 700;
   color: #1a1a1a;
   white-space: nowrap;
@@ -513,7 +507,7 @@ const essayParagraphs = computed(() => rawParagraphs.map(parseParagraph))
 /* ─── Responsive ─── */
 @media (max-width: 768px) {
   .essay {
-    padding: 2vh 1.5rem 30vh;
+    padding: 5vh 2rem 100vh;
   }
 
   .title-group { 
@@ -521,7 +515,7 @@ const essayParagraphs = computed(() => rawParagraphs.map(parseParagraph))
   }
 
   .title-text {
-    font-size: clamp(3rem, 6vw, 4rem);
+    font-size: clamp(2.5rem, 6.5vw, 4.5rem);
     object-position: center center;
   }
 
@@ -532,11 +526,11 @@ const essayParagraphs = computed(() => rawParagraphs.map(parseParagraph))
 
 @media (max-width: 480px) {
   .essay {
-    padding: 2vh 1rem 20vh;
+    padding: 5vh 2rem 100vh;
   }
 
   .title-text {
-    font-size: clamp(1.8rem, 5vw, 3rem);
+    font-size: clamp(2.3rem, 5.5vw, 3.5rem);
   }
 
   .tooltip {
