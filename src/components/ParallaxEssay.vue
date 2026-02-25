@@ -34,6 +34,13 @@ const textOffset = computed(() => {
   return 100 - (progress * 250)
 })
 
+const subtitleOffset = computed(() => {
+  if (windowHeight.value === 0) return -100
+  const progress = Math.min(Math.max(scrollY.value / (windowHeight.value * titleScrollRange), 0), 1)
+  // Subtitle: Starts at -100vw (left), scrolls to 150vw (off-screen right)
+  return -100 + (progress * 250)
+})
+
 const titleOpacity = computed(() => {
   // Changed to return 1 consistently so the title no longer fades away
   return 1
@@ -248,11 +255,17 @@ const essayParagraphs = computed(() => rawParagraphs.map(parseParagraph))
 
       <!-- Phase 1: Title scroll spacer -->
         <div class="title-spacer">
-        <div class="title-track" :style="{ opacity: titleOpacity }">
-          <h1
-            class="title-text"
-            :style="{ transform: 'translateX(' + textOffset + 'vw)' }"
-          >Tell umma I'm walking to Baekdusan</h1>
+        <div class="title-group">
+          <div class="title-track" :style="{ opacity: titleOpacity }">
+            <h1
+              class="title-text"
+              :style="{ transform: 'translateX(' + textOffset + 'vw)' }"
+            >Tell umma I'm walking to Baekdusan</h1>
+            <!-- <p 
+                class="subtitle-text"
+                :style="{ transform: 'translateX(' + subtitleOffset + 'vw)' }"
+              >by Anne Lee Steele</p> -->
+          </div>
         </div>
       </div>
 
@@ -390,6 +403,14 @@ const essayParagraphs = computed(() => rawParagraphs.map(parseParagraph))
   overflow: visible;
 }
 
+.title-group {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2rem; /* Vertical space between title and subtitle */
+  width: 100%;
+}
+
 .title-text {
   font-family: 'Noto Serif KR', sans-serif;
   font-size: clamp(3rem, 7vw, 6rem);
@@ -399,6 +420,15 @@ const essayParagraphs = computed(() => rawParagraphs.map(parseParagraph))
   margin: 0;
   will-change: transform;
   line-height: 1.1;
+}
+
+.subtitle-text {
+  font-family: 'Noto Serif KR', sans-serif;
+  font-size: clamp(1.2rem, 2.5vw, 2.5rem);
+  color: #1a1a1a;
+  margin-top: 1rem;
+  white-space: nowrap;
+  will-change: transform;
 }
 
 .fade-spacer {
@@ -484,6 +514,10 @@ const essayParagraphs = computed(() => rawParagraphs.map(parseParagraph))
 @media (max-width: 768px) {
   .essay {
     padding: 2vh 1.5rem 30vh;
+  }
+
+  .title-group { 
+    gap: 1rem; 
   }
 
   .title-text {
