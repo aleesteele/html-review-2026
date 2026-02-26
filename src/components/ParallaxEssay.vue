@@ -453,7 +453,7 @@ const essayParagraphs = computed(() => rawParagraphs.map(parseParagraph))
   font-size: clamp(1rem, 1.4vw, 1.05rem);
   line-height: 1.75;
   color: #1a1a1a;
-  font-weight: 500;
+  font-weight: 700;
   margin-bottom: 1.8em;
   text-align: left;
 }
