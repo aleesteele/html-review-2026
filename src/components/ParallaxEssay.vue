@@ -16,29 +16,35 @@ onMounted(() => {
   windowHeight.value = window.innerHeight
   window.addEventListener('scroll', onScroll, { passive: true })
   window.addEventListener('resize', onResize, { passive: true })
+  document.addEventListener('touchstart', onTouchOutside, { passive: true })
+  window.addEventListener('scroll', onScrollHideTooltip, { passive: true })
 })
 
 onUnmounted(() => {
   window.removeEventListener('scroll', onScroll)
   window.removeEventListener('resize', onResize)
+  document.removeEventListener('touchstart', onTouchOutside)
+  window.removeEventListener('scroll', onScrollHideTooltip)
 })
 
 // ── Scroll phases ──
-const titleScrollRange = 3
+const titleScrollRange = 5
 const fadeRange = 1
 
 const textOffset = computed(() => {
   if (windowHeight.value === 0) return 100
-  const progress = Math.min(Math.max(scrollY.value / (windowHeight.value * titleScrollRange), 0), 1)
-  // Changed from 150 to 250 to ensure the text moves far enough to clear the screen on the left
+  // Let text keep moving through title + fade phases
+  const totalRange = titleScrollRange + fadeRange
+  const progress = Math.min(Math.max(scrollY.value / (windowHeight.value * totalRange), 0), 1)
+  // Start at 100vw (off-screen right), end at -400vw (well off-screen left)
   return 100 - (progress * 250)
 })
 
 const subtitleOffset = computed(() => {
   if (windowHeight.value === 0) return -100
-  const progress = Math.min(Math.max(scrollY.value / (windowHeight.value * titleScrollRange), 0), 1)
-  // Subtitle: Starts at -100vw (left), scrolls to 150vw (off-screen right)
-  return -100 + (progress * 250)
+  const totalRange = titleScrollRange + fadeRange
+  const progress = Math.min(Math.max(scrollY.value / (windowHeight.value * totalRange), 0), 1)
+  return -100 + (progress * 300)
 })
 
 const titleOpacity = computed(() => {
@@ -49,10 +55,23 @@ const bgOpacity = computed(() => {
   if (windowHeight.value === 0) return 1
   const fadeStart = windowHeight.value * titleScrollRange
   const fadeEnd = fadeStart + windowHeight.value * fadeRange
+  // Fade back in: starts 2 viewports before the end of the page
+  const docHeight = document.documentElement.scrollHeight
+  const fadeBackStart = docHeight - windowHeight.value * 1
+  const fadeBackEnd = docHeight - windowHeight.value
+
+  // // Fade back in at the end
+  // if (scrollY.value >= fadeBackStart) {
+  //   const progress = Math.min((scrollY.value - fadeBackStart) / (fadeBackEnd - fadeBackStart), 1)
+  //   return 0.30 + 0.70 * progress
+  // }
+
+  // Normal fade down during title→essay transition
   if (scrollY.value <= fadeStart) return 1
   if (scrollY.value >= fadeEnd) return 0.30
   return 1 - 0.70 * ((scrollY.value - fadeStart) / (fadeEnd - fadeStart))
 })
+
 
 const essayOpacity = computed(() => {
   return 1
@@ -89,6 +108,17 @@ function keepTooltip() {
   if (hideTimeout) clearTimeout(hideTimeout)
 }
 
+// Close tooltip on tap outside or scroll (mobile)
+function onTouchOutside(event) {
+  if (!tooltip.visible) return
+  if (event.target.closest('.tooltip') || event.target.closest('.annotated')) return
+  tooltip.visible = false
+}
+
+function onScrollHideTooltip() {
+  if (tooltip.visible) tooltip.visible = false
+}
+
 // ══════════════════════════════════════════════════════
 // ESSAY DATA WITH ANNOTATIONS
 // ══════════════════════════════════════════════════════
@@ -109,7 +139,7 @@ function keepTooltip() {
 // ══════════════════════════════════════════════════════
 
 const rawParagraphs = [
-  `by Anne Lee Steele`,
+  `by {{Anne Lee Steele|link:https://aleesteele.com}}`,
 
   `I first heard about the Baekdusan in a book my umma would read to me as a child. Each page was illustrated with myths, stories, and songs that she remembered from her own childhood in a mountain village near {{Gwangju|note:A city in South Jeolla Province, South Korea, known for the pro-democracy uprising of May 1980.}}, a city in the south of Korea made famous by the bloody protests that took place there in 1980. She had bought the book after the 1988 Olympics, the first time an international event had taken place in her homeland, a glimmer of what eventually became the {{hallyu wave|note:The Korean Wave — the global spread of South Korean culture including K-pop, K-drama, film, and cuisine.}}. Appropriate for the type of patriotism it was intended to inspire, the book was titled "I Love Korea!", exclamation point included.`,
 
@@ -181,8 +211,6 @@ const rawParagraphs = [
 ]
 
 // ── Parse annotations from raw text ──
-// Converts "text {{phrase|note:...|image:...}} more text"
-// into [ {text: "text "}, {text: "phrase", annotation: {note, image}}, {text: " more text"} ]
 function parseParagraph(raw) {
   const segments = []
   const regex = /\{\{(.+?)\}\}/g
@@ -190,12 +218,10 @@ function parseParagraph(raw) {
   let match
 
   while ((match = regex.exec(raw)) !== null) {
-    // Text before the annotation
     if (match.index > lastIndex) {
       segments.push({ text: raw.slice(lastIndex, match.index) })
     }
 
-    // Parse the annotation: "phrase|note:...|image:..."
     const inner = match[1]
     const parts = inner.split('|')
     const phrase = parts[0]
@@ -214,7 +240,6 @@ function parseParagraph(raw) {
     lastIndex = match.index + match[0].length
   }
 
-  // Remaining text after last annotation
   if (lastIndex < raw.length) {
     segments.push({ text: raw.slice(lastIndex) })
   }
@@ -227,46 +252,44 @@ const essayParagraphs = computed(() => rawParagraphs.map(parseParagraph))
 
 <template>
   <div class="page">
-    <!-- ═══ FIXED MOUNTAIN LAYERS (always visible) ═══ -->
-
     <!-- Background mountains (z-index 1) -->
     <div class="fixed-layer fixed-layer--bg" :style="{ opacity: bgOpacity }">
       <img src="/images/background.png" alt="" class="fixed-layer__img" />
     </div>
 
-    <!-- Foreground mountains (z-index 3, on top of text) -->
+    <!-- Foreground mountains (z-index 3) -->
     <div class="fixed-layer fixed-layer--fg-mountains">
       <img src="/images/foreground-mountains.png" alt="" class="fixed-layer__img fixed-layer__img--bottom" />
     </div>
 
-    <!-- Foreground clouds (z-index 4, drifting left to right) -->
+    <!-- Foreground clouds (z-index 4, drifting) -->
     <div class="fixed-layer fixed-layer--fg-clouds">
       <img src="/images/foreground-clouds.png" alt="" class="fixed-layer__img fixed-layer__img--clouds" />
     </div>
 
-    <!-- ═══ SCROLLING CONTENT (z-index 2, between the mountain layers) ═══ -->
+    <!-- Scrolling content (z-index 2) -->
     <div class="scroll-content">
 
-      <!-- Phase 1: Title scroll spacer -->
-        <div class="title-spacer">
-        <div class="title-group">
-          <div class="title-track" :style="{ opacity: titleOpacity }">
-            <h1
-              class="title-text"
-              :style="{ transform: 'translateX(' + textOffset + 'vw)' }"
-            >Tell umma I'm walking to Baekdusan</h1>
-            <!-- <p 
-                class="subtitle-text"
-                :style="{ transform: 'translateX(' + subtitleOffset + 'vw)' }"
-              >by Anne Lee Steele</p> -->
-          </div>
+      <!-- Phase 1: Title horizontal scroll -->
+      <div class="title-spacer">
+        <div class="title-track">
+          <h1
+            class="title-text"
+            :style="{ transform: 'translateX(' + textOffset + 'vw)' }"
+          >Tell umma I'm walking to Baekdusan</h1>
+        </div>
+        <div class="subtitle-track">
+          <h1
+            class="title-text"
+            :style="{ transform: 'translateX(' + textOffset + 'vw)' }"
+          >by Anne Lee Steele</h1>
         </div>
       </div>
 
-      <!-- Phase 2: Transparent crossfade spacer -->
+      <!-- Phase 2: Crossfade spacer -->
       <div class="fade-spacer"></div>
 
-      <!-- Phase 3: Essay with annotated text -->
+      <!-- Phase 3: Essay -->
       <article class="essay" :style="{ opacity: essayOpacity }">
         <div class="essay__body">
           <p
@@ -291,7 +314,7 @@ const essayParagraphs = computed(() => rawParagraphs.map(parseParagraph))
       </article>
     </div>
 
-    <!-- ═══ TOOLTIP (z-index 100, above everything) ═══ -->
+    <!-- Tooltip (z-index 100) -->
     <Transition name="tooltip-fade">
       <div
         v-if="tooltip.visible"
@@ -319,6 +342,7 @@ const essayParagraphs = computed(() => rawParagraphs.map(parseParagraph))
 .page {
   background: #d5c9a6;
   min-height: 100vh;
+  overflow-x: hidden;
 }
 
 /* ─── Fixed Mountain Layers ─── */
@@ -354,18 +378,16 @@ const essayParagraphs = computed(() => rawParagraphs.map(parseParagraph))
   display: block;
 }
 
-/* Mountains: natural size, pinned to bottom */
 .fixed-layer__img--bottom {
   width: 100%;
   height: auto;
   display: block;
 }
 
-/* Clouds drift slowly left to right */
 .fixed-layer__img--clouds {
   object-fit: contain;
   object-position: center top;
-  animation: cloud-drift 50s ease-in-out infinite alternate;
+  animation: cloud-drift 40s ease-in-out infinite alternate;
 }
 
 @keyframes cloud-drift {
@@ -380,29 +402,22 @@ const essayParagraphs = computed(() => rawParagraphs.map(parseParagraph))
 }
 
 .title-spacer {
-  height: 300vh;
+  height: 600vh;
   position: relative;
 }
 
+/* Title: fixed, vertically centered, no horizontal clipping */
 .title-track {
   position: fixed;
   top: 0;
   left: 0;
-  width: 100%;
+  width: 100vw;
   height: 100vh;
   z-index: 2;
   pointer-events: none;
   display: flex;
   align-items: center;
-  overflow: visible;
-}
-
-.title-group {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 2rem; /* Vertical space between title and subtitle */
-  width: 100%;
+  justify-content: flex-start;
 }
 
 .title-text {
@@ -410,19 +425,15 @@ const essayParagraphs = computed(() => rawParagraphs.map(parseParagraph))
   font-size: clamp(3.5rem, 7.5vw, 6.5rem);
   font-weight: 700;
   color: #1a1a1a;
+  background-color: #e4dbc1;
+  border:#1a1a1a;
+  border-style: solid;
   white-space: nowrap;
+  padding: 2rem;
   margin: 0;
   will-change: transform;
   line-height: 1.1;
-}
-
-.subtitle-text {
-  font-family: 'Noto Serif KR', sans-serif;
-  font-size: clamp(1.2rem, 2.5vw, 2.5rem);
-  color: #1a1a1a;
-  margin-top: 1rem;
-  white-space: nowrap;
-  will-change: transform;
+  flex-shrink: 0;
 }
 
 .fade-spacer {
@@ -438,7 +449,7 @@ const essayParagraphs = computed(() => rawParagraphs.map(parseParagraph))
 }
 
 .essay__paragraph {
-  font-family: 'Noto Serif KR', sans-serif;                                              
+  font-family: 'Noto Serif KR', sans-serif;
   font-size: clamp(1rem, 1.4vw, 1.05rem);
   line-height: 1.75;
   color: #1a1a1a;
@@ -493,7 +504,6 @@ const essayParagraphs = computed(() => rawParagraphs.map(parseParagraph))
   margin: 0;
 }
 
-/* Tooltip transition */
 .tooltip-fade-enter-active,
 .tooltip-fade-leave-active {
   transition: opacity 0.15s ease;
@@ -510,13 +520,8 @@ const essayParagraphs = computed(() => rawParagraphs.map(parseParagraph))
     padding: 5vh 2rem 100vh;
   }
 
-  .title-group { 
-    gap: 1rem; 
-  }
-
   .title-text {
     font-size: clamp(2.5rem, 6.5vw, 4.5rem);
-    object-position: center center;
   }
 
   .tooltip {
