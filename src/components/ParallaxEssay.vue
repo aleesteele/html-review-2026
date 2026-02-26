@@ -442,7 +442,7 @@ const essayParagraphs = computed(() => rawParagraphs.map(parseParagraph))
 
 /* ─── Essay ─── */
 .essay {
-  max-width: 1000px;
+  max-width: 800px;
   margin: 0 auto;
   padding: 5vh 2rem 100vh;
   will-change: opacity;
