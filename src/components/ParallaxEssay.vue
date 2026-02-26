@@ -423,7 +423,7 @@ const essayParagraphs = computed(() => rawParagraphs.map(parseParagraph))
 .title-text {
   font-family: 'Noto Serif KR', sans-serif;
   font-size: clamp(3.5rem, 7.5vw, 6.5rem);
-  font-weight: 700;
+  font-weight: 800;
   color: #1a1a1a;
   background-color: #e4dbc1;
   border:#1a1a1a;
