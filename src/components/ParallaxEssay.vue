@@ -10,6 +10,7 @@ function onScroll() {
 
 function onResize() {
   windowHeight.value = window.innerHeight
+  measureTitle()
 }
 
 onMounted(() => {
@@ -18,6 +19,7 @@ onMounted(() => {
   window.addEventListener('resize', onResize, { passive: true })
   document.addEventListener('touchstart', onTouchOutside, { passive: true })
   window.addEventListener('scroll', onScrollHideTooltip, { passive: true })
+  setTimeout(measureTitle, 100)
 })
 
 onUnmounted(() => {
@@ -31,13 +33,24 @@ onUnmounted(() => {
 const titleScrollRange = 5
 const fadeRange = 1
 
+const titleEl = ref(null)
+const titleWidthVw = ref(300) // fallback
+
+function measureTitle() {
+  if (titleEl.value) {
+    const w = titleEl.value.offsetWidth
+    const vw = window.innerWidth
+    titleWidthVw.value = (w / vw) * 100
+  }
+}
+
 const textOffset = computed(() => {
   if (windowHeight.value === 0) return 100
-  // Let text keep moving through title + fade phases
   const totalRange = titleScrollRange + fadeRange
   const progress = Math.min(Math.max(scrollY.value / (windowHeight.value * totalRange), 0), 1)
-  // Start at 100vw (off-screen right), end at -400vw (well off-screen left)
-  return 100 - (progress * 250)
+  // Must travel: 100vw (start off-screen right) + title width (to fully exit left)
+  const totalTravel = 100 + titleWidthVw.value + 20 // 20vw buffer
+  return 100 - (progress * totalTravel)
 })
 
 const titleOpacity = computed(() => {
@@ -274,6 +287,7 @@ const essayParagraphs = computed(() => rawParagraphs.map(parseParagraph))
       <div class="title-spacer">
         <div class="title-track">
           <h1
+            ref="titleEl"
             class="title-text"
             :style="{ transform: 'translateX(' + textOffset + 'vw)' }"
           >Tell umma I'm walking to Baekdusan
