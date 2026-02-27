@@ -40,13 +40,6 @@ const textOffset = computed(() => {
   return 100 - (progress * 250)
 })
 
-const subtitleOffset = computed(() => {
-  if (windowHeight.value === 0) return -100
-  const totalRange = titleScrollRange + fadeRange
-  const progress = Math.min(Math.max(scrollY.value / (windowHeight.value * totalRange), 0), 1)
-  return -100 + (progress * 300)
-})
-
 const titleOpacity = computed(() => {
   return 1
 })
@@ -139,13 +132,12 @@ function onScrollHideTooltip() {
 // ══════════════════════════════════════════════════════
 
 const rawParagraphs = [
-  `by {{Anne Lee Steele|link:https://aleesteele.com}}`,
 
-  `I first heard about the Baekdusan in a book my umma would read to me as a child. Each page was illustrated with myths, stories, and songs that she remembered from her own childhood in a mountain village near {{Gwangju|note:A city in South Jeolla Province, South Korea, known for the pro-democracy uprising of May 1980.}}, a city in the south of Korea made famous by the bloody protests that took place there in 1980. She had bought the book after the 1988 Olympics, the first time an international event had taken place in her homeland, a glimmer of what eventually became the {{hallyu wave|note:The Korean Wave — the global spread of South Korean culture including K-pop, K-drama, film, and cuisine.}}. Appropriate for the type of patriotism it was intended to inspire, the book was titled "I Love Korea!", exclamation point included.`,
+  `I first heard about the Baekdusan in a book my umma would read to me as a child. Each page was illustrated with myths, stories, and songs that she remembered from her own childhood in a {{mountain village near Gwangju|note:A city in South Jeolla Province, South Korea, known for the pro-democracy uprising of May 1980.}}, a city in the south of Korea made famous by the bloody protests that took place there in 1980. She had bought the book after the 1988 Olympics, the first time an international event had taken place in her homeland, a glimmer of what eventually became the {{hallyu wave|note:The Korean Wave — the global spread of South Korean culture including K-pop, K-drama, film, and cuisine.}}. Appropriate for the type of patriotism it was intended to inspire, the book was titled {{"I Love Korea!"|note}}, exclamation point included.`,
 
-  `Of course, I was too young to understand the shifts in selfhood that migration creates as a child born and raised in the American empire. Instead, I loved the stories themselves, and the illustrations that showed me another way of seeing the world outside of high-rise Chicago skyscrapers or midwestern pay-to-pick farms. The world of the book (and therefore the world of my mother's homeland) was inhabited by talking tigers and sea spirits, by brothers and sisters that became the sun and the moon, of gods descending to earth through the mountains. One of my favorites was about the tiger and the bear.`,
+  `Of course, I was too young to understand the shifts in selfhood that migration creates as a child born and raised in the American empire. Instead, I loved the stories themselves, and the illustrations that showed me another way of seeing the world outside of {{high-rise Chicago skyscrapers|image:/images/chicago.jpg:}} or {{midwestern pay-to-pick farms|}}. The world of the book (and therefore the world of my mother's homeland) was inhabited by talking tigers and sea spirits, by brothers and sisters that became the sun and the moon, of gods descending to earth through the mountains. One of my favorites was about the tiger and the bear.`,
 
-  `In the beginning, {{Hwanung|note:A figure in Korean mythology, the son of Hwanin (Lord of Heaven), who descended to earth to found a city on Mount Paekdu.}}, the son of Hwanin (the Sky god) so wanted to come to earth that he was sent to the peak of Mount Paekdu. As he ruled the world from a city he created at the volcano's center, a bear and tiger came to ask if they could become humans. He gave the pair a stalk of mugwort and twenty pieces of garlic, and told them that if they ate both and avoided the sunlight for one hundred days, they would become human.`,
+  `In the beginning, {{Hwanung|note:A figure in Korean mythology, the son of {{Hwanin (Lord of Heaven)}}, who descended to earth to found a city on Mount Paekdu.}}, the son of Hwanin (the Sky god) so wanted to come to earth that he was sent to the peak of Mount Paekdu. As he ruled the world from a city he created at the volcano's center, a bear and tiger came to ask if they could become humans. He gave the pair a stalk of mugwort and twenty pieces of garlic, and told them that if they ate both and avoided the sunlight for one hundred days, they would become human.`,
 
   `While the tiger only lasted a few days in the cave, the bear stayed and became a woman. She eventually wed Hwanung, and their son, {{Tan'gun|note:The legendary founder of Gojoseon, the first Korean kingdom, said to have been established in 2333 BC.}} became the ancestor of the Korean people. He ruled for 1,500 years before eventually becoming a mountain god ({{sanshin|note:산신 — Mountain spirit. Sanshin worship is one of the oldest continuous spiritual practices in Korea, predating Buddhism and Confucianism.}}).`,
 
@@ -157,9 +149,9 @@ const rawParagraphs = [
 
   `There's no real meaningful explanation as to why I like mountains other than that I simply feel more alive when I'm outside. My face is more sensitive to the wind and the rain on my cheeks. My food, however disgustedly prepared, tastes more delicious at altitude. My sense of mortality seems more profound and lending of direction when I can see the world from a bird's eye view.`,
 
-  `That's not to say that I've always been like this. My suburban childhood led to an urban adulthood. I came of age in global cities: New York City for university, Los Angeles and Madrid for two different summers in college, Washington DC for my first job, Geneva for graduate school, London for another job. Most of my friends would likely categorize me as a "city mouse", even a "townie", especially in comparison to my more traditionally mountain goat-like partner.`,
+  `That's not to say that I've always been like this. My suburban childhood led to an urban adulthood. I came of age in global cities: New York City for university, Los Angeles and Madrid for two different summers in college, Washington DC for my first job, Geneva for graduate school, London for another job. Most of my friends would likely categorize me as a "city mouse", especially in comparison to my more traditionally mountain goat-like partner.`,
 
-  `But even in cities, I always found myself gravitating towards the spaces where I could find breathing room: the roof of my apartment in {{Inwood|note:A neighbourhood at the northern tip of Manhattan, known for its proximity to Fort Tryon Park and the Cloisters.}}, the ponds of Hampstead Heath, the rambling hills of the lower Jura that were a run away from my apartment.`,
+  `But even in cities, I always found myself gravitating towards the spaces where I could find breathing room: the roof of my apartment in {{Inwood|note:A neighbourhood at the northern tip of Manhattan, known for its proximity to Fort Tryon Park and the Cloisters.}}, the {{ponds of Hampstead Heath|note: note}}, the {{rambling hills of the lower Jura|note:}} that were a run away from my apartment.`,
 
   `Going to the mountains has always felt more like a spiritual practice than an adventure, something I could never quite explain even to my sportiest of friends. I've always needed my dosage on a regular basis, and I could never really understand why until recently.`,
 
@@ -276,13 +268,9 @@ const essayParagraphs = computed(() => rawParagraphs.map(parseParagraph))
           <h1
             class="title-text"
             :style="{ transform: 'translateX(' + textOffset + 'vw)' }"
-          >Tell umma I'm walking to Baekdusan</h1>
-        </div>
-        <div class="subtitle-track">
-          <h1
-            class="title-text"
-            :style="{ transform: 'translateX(' + textOffset + 'vw)' }"
-          >by Anne Lee Steele</h1>
+          >Tell umma I'm walking to Baekdusan
+          <span class="title-subtitle">By <a href="https://aleesteele.com" target="_blank" rel="noopener noreferrer" class="title-link">Anne Lee Steele</a></span>
+          </h1>
         </div>
       </div>
 
@@ -333,6 +321,13 @@ const essayParagraphs = computed(() => rawParagraphs.map(parseParagraph))
           class="tooltip__image"
         />
         <p v-if="tooltip.note" class="tooltip__note">{{ tooltip.note }}</p>
+        <a
+          v-if="tooltip.link"
+          :href="tooltip.link"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="tooltip__link"
+        >Read more →</a>
       </div>
     </Transition>
   </div>
@@ -407,6 +402,7 @@ const essayParagraphs = computed(() => rawParagraphs.map(parseParagraph))
 }
 
 /* Title: fixed, vertically centered, no horizontal clipping */
+
 .title-track {
   position: fixed;
   top: 0;
@@ -434,6 +430,25 @@ const essayParagraphs = computed(() => rawParagraphs.map(parseParagraph))
   will-change: transform;
   line-height: 1.1;
   flex-shrink: 0;
+}
+
+.title-subtitle {
+  display: block;
+  font-family: 'Noto Serif KR', sans-serif;
+  font-style: oblique;
+  font-size: 0.2em;
+  font-weight: 400;
+  margin-top: 0.8rem;
+  letter-spacing: 0.05em;
+  text-align: center;
+}
+
+.title-link {
+  color: #1a1a1a;
+  text-decoration: underline;
+  text-decoration-style: dotted;
+  text-underline-offset: 3px;
+  pointer-events: auto;
 }
 
 .fade-spacer {
