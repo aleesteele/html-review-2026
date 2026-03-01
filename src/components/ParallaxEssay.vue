@@ -409,7 +409,7 @@ const essayParagraphs = computed(() => rawParagraphs.map(parseParagraph))
 .fixed-layer__img--clouds {
   object-fit: contain;
   object-position: center top;
-  animation: cloud-drift 60s ease-in-out infinite alternate;
+  animation: cloud-drift 70s ease-in-out infinite alternate;
 }
 
 @keyframes cloud-drift {
