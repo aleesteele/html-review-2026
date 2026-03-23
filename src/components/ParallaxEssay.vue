@@ -226,6 +226,7 @@ const rawParagraphs = [
   `Maybe if I eat 20 garlics and a mugwort and stay in a cave for 100 days, I too will emerge a new being. Maybe if I eat 200 ramyeons and walk across the Baekdudaegan, I will be a better person.`,
 
   `My flights are booked for this year, to finally join the trail. I'll start with Hallasan, or perhaps Jirisan. This year, and maybe the year after that, and the one after that and so on, I will walk to Baekdusan. I told my umma, and she wants to come. So does my cousin, and my uncle, maybe one of my brothers. I won't bring my computer.`
+
 ]
 
 // ── Parse annotations from raw text ──
@@ -296,7 +297,7 @@ const essayParagraphs = computed(() => rawParagraphs.map(parseParagraph))
             class="title-text"
             :style="{ transform: 'translateX(' + textOffset + 'vw)' }"
           >Tell umma I'm walking to Baekdusan
-          <span class="title-subtitle">By <a href="https://aleesteele.com" target="_blank" rel="noopener noreferrer" class="title-link">Anne Lee Steele</a></span>
+          <span class="title-subtitle">By <a href="https://aleesteele.com" target="_blank" rel="noopener noreferrer" class="title-link">Anne Lee Steele</a> for <a href="https://thehtml.review/05/">HTML review</a></span>
           </h1>
         </div>
       </div>
