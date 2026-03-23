@@ -297,7 +297,7 @@ const essayParagraphs = computed(() => rawParagraphs.map(parseParagraph))
             class="title-text"
             :style="{ transform: 'translateX(' + textOffset + 'vw)' }"
           >Tell umma I'm walking to Baekdusan
-          <span class="title-subtitle">By <a href="https://aleesteele.com" target="_blank" rel="noopener noreferrer" class="title-link">Anne Lee Steele</a> for <a href="https://thehtml.review/05/">HTML review</a></span>
+          <span class="title-subtitle">By <a href="https://aleesteele.com" target="_blank" rel="noopener noreferrer" class="title-link">Anne Lee Steele</a> for <a href="https://thehtml.review/05/" target="_blank" rel="noopener noreferrer" class="title-link">HTML review</a></span>
           </h1>
         </div>
       </div>
